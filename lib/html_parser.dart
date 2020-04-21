@@ -19,6 +19,7 @@ class HtmlOldParser extends StatelessWidget {
         color: Colors.blueAccent,
         decorationColor: Colors.blueAccent),
     this.showImages = true,
+    this.server,
   });
 
   final double width;
@@ -27,6 +28,7 @@ class HtmlOldParser extends StatelessWidget {
   final CustomRender customRender;
   final double blockSpacing;
   final String html;
+  final String server;
   final ImageErrorListener onImageError;
   final TextStyle linkStyle;
   final bool showImages;
@@ -506,12 +508,21 @@ class HtmlOldParser extends StatelessWidget {
                     return Image.memory(base64.decode(
                         node.attributes['src'].split("base64,")[1].trim()));
                   }
-                  precacheImage(
-                    NetworkImage(node.attributes['src']),
-                    context,
-                    onError: onImageError,
-                  );
-                  return Image.network(node.attributes['src']);
+                  if (node.attributes['src'].startsWith('http')) {
+                    precacheImage(
+                      NetworkImage(node.attributes['src']),
+                      context,
+                      onError: onImageError,
+                    );
+                    return Image.network(node.attributes['src']);
+                  } else {
+                    precacheImage(
+                      NetworkImage(server + node.attributes['src']),
+                      context,
+                      onError: onImageError,
+                    );
+                    return Image.network(server + node.attributes['src']);
+                  }
                 } else if (node.attributes['alt'] != null) {
                   //Temp fix for https://github.com/flutter/flutter/issues/736
                   if (node.attributes['alt'].endsWith(" ")) {
