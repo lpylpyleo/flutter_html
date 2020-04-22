@@ -165,6 +165,7 @@ class HtmlRichTextParser extends StatelessWidget {
     this.imageProperties,
     this.onImageTap,
     this.showImages = true,
+    this.server,
   });
 
   final double indentSize = 10.0;
@@ -173,6 +174,7 @@ class HtmlRichTextParser extends StatelessWidget {
   final onLinkTap;
   final bool renderNewlines;
   final String html;
+  final String server;
   final CustomEdgeInsets customEdgeInsets;
   final CustomTextStyle customTextStyle;
   final CustomTextAlign customTextAlign;
@@ -788,7 +790,8 @@ class HtmlRichTextParser extends StatelessWidget {
                     },
                   ));
                 } else if (node.attributes['src'].startsWith('asset:')) {
-                  final assetPath = node.attributes['src'].replaceFirst('asset:', '');
+                  final assetPath =
+                      node.attributes['src'].replaceFirst('asset:', '');
                   precacheImage(
                     AssetImage(assetPath),
                     buildContext,
@@ -841,6 +844,9 @@ class HtmlRichTextParser extends StatelessWidget {
                     },
                   ));
                 } else {
+                  if (node.attributes['src'].startsWith('http')) {
+                    node.attributes['src'] = server + node.attributes['src'];
+                  }
                   precacheImage(
                     NetworkImage(node.attributes['src']),
                     buildContext,
