@@ -844,7 +844,7 @@ class HtmlRichTextParser extends StatelessWidget {
                     },
                   ));
                 } else {
-                  if (node.attributes['src'].startsWith('http')) {
+                  if (!node.attributes['src'].startsWith('http')) {
                     node.attributes['src'] = server + node.attributes['src'];
                   }
                   precacheImage(
